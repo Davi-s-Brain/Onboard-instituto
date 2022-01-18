@@ -1,0 +1,25 @@
+{
+  "name": "Onboard-instituto",
+  "version": "1.0.0",
+  "description": "Este projeto será realizado com o intuito de aprender como funciona o work flow do Instituto Taqtile, assim como desbravar o mundo do Back end.",
+  "main": "index.js",
+  "dependencies": {
+    "apollo-server": "^3.6.1",
+    "graphql": "^16.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://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@github.com/Davi-s-Brain/Onboard-instituto.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Davi-s-Brain/Onboard-instituto/issues"
+  },
+  "homepage": "https://github.com/Davi-s-Brain/Onboard-instituto#readme"
+}
