@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "apollo-server": "^3.6.1",
+    "core-util-is": "^1.0.3",
     "graphql": "^16.2.0",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
@@ -17,7 +18,8 @@
     "typescript": "^4.5.4"
   },
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "start": "ts-node-dev src/index.ts"
   },
   "repository": {
     "type": "git",
