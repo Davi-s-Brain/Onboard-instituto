@@ -1,4 +1,5 @@
 import { createConnection, Connection } from "typeorm";
+import { User } from "./user"
 
 const connection = async () => {
   await createConnection({
