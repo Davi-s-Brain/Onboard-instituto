@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server')
+import 'reflect-metadata'
 
 const typeDefs = gql`
   type Query {
