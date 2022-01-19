@@ -1,5 +1,7 @@
-services:  
-  localdb:
+version: '3'
+
+services:
+  postgres:
     image: postgres:11.2
     ports:
       - "5432:5432"
@@ -9,16 +11,14 @@ services:
       - POSTGRES_USER=davi
       - POSTGRES_PASSWORD=davi
       - POSTGRES_DB=users
-    restart: always
 
   testdb:
     image: postgres:11.2
     ports:
-      - "5433:5432"
+      - "5433:5433"
     volumes:
       - ./db/dumps:/app-db-dumps
     environment:
       - POSTGRES_USER=davi
       - POSTGRES_PASSWORD=davi
       - POSTGRES_DB=tests
-    restart: always
