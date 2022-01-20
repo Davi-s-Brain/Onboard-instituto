@@ -3,13 +3,13 @@
 Este é um projeto realizado com o intuito de aprender como funciona o work flow do Instituto Taqtile, assim como desbravar o mundo do Back end.
 #
 
-# Tabela de conteúdos
-<!--ts-->
-* [Techs](##Techs)
-* [Requisitos](##Requisitos)
-* [Rodando o back-end](#Rodando-o-back-end)
-* [Autor](##Autor)
-<!--te--> 
+
+<p>
+  <a href="#-techs">Techs</a> •
+  <a href="#-requisitos">Requisitos</a> •
+  <a href="#-rodando-o-back-end">Rodando o back-end</a> •
+  <a href="#-autor">Autor</a>
+</p>
 
 ## Techs
 Foram utilizadas as seguintes tecnologias para a construção do projeto:
