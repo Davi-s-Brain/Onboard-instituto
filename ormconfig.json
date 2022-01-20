@@ -7,7 +7,8 @@
   "database": "postgres",
   "entities": [
     "src/entity/*.ts"
- ]
+ ],
+  "sincronize": "true"
 },
 
 {
