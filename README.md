@@ -29,9 +29,8 @@ Foram utilizadas as seguintes tecnologias para a construção do projeto:
 * [TypeScript](https://www.typescriptlang.org) versão 4 ou superior
 * [GraphQL](https://graphql.org)
 * Configurar o [Table plus](https://tableplus.com) de acordo com as credenciais no arquivo database.ts
-<br/>
-<br/>
-# 🎲 Rodando o back-end
+
+# 🎲 Rodando o back-end <br/>
 ```bash
 # Clone este repositório
 $ git clone <https://github.com/Davi-s-Brain/Onboard-instituto>
