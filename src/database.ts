@@ -1,14 +1,20 @@
-import { createConnection, Connection } from "typeorm";
-//import { User } from "./user"
+import 'reflect-metadata'
+import { createConnection, ConnectionManager } from 'typeorm';
+import { User } from './entity/user'
 
-const connection = async () => {
-  await createConnection({
-    type: "mysql",
-    host: "localhost",
+const connectionManager = new ConnectionManager()
+
+createConnection().then(async () => {
+  const connection = connectionManager.create({
+    type: 'postgres',
+    host: 'localhost',
     port: 5432,
-    username: "postgres",
-    password: "postgres",
-    database: "users"
+    username: 'postgres',
+    password: 'postgres',
+    database: 'postgres',
+    entities: [User]
   });
-}
+  await connection.connect()
+  
 
+}).catch(error => {console.log(error)})
