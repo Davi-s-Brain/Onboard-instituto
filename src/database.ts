@@ -7,11 +7,7 @@ const connectionManager = new ConnectionManager()
 createConnection().then(async () => {
   const connection = connectionManager.create({
     type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: 'postgres',
-    database: 'postgres',
+    url: 'postgres://postgres:postgres@localhost/postgres',
     entities: [User],
     synchronize: true
   });
