@@ -13,6 +13,14 @@ export const resolvers = {
     createUser:async (_parent:any, args: {data:{name:string, email:string, birthday:string, password:string}}) => {
       const userRepository = getRepository(User)
       const user = await userRepository.findOne({ where: { email: args.data.email } })
+      
+      const alphabet = args.data.password.match(/^[A-Za-z]+$/)
+      const number = args.data.password.match(/^[0-9]+$/) 
+      const password = args.data.password.length < 6 || alphabet || number
+      
+      if (password) {
+        throw new Error("A senha precisa ter ao menos 6 caracteres, uma letra e um número")
+      }
 
       if (user) {
         throw new Error ("E-mail já existente. Cadastre outro e-mail.")
