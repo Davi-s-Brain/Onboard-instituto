@@ -13,6 +13,7 @@ export const connection = async () => {
     synchronize: true
   });
   await connection.connect()
+  console.log('Banco conectado com sucesso 😎')
 
   }).catch(error => {console.log(error)})
 } 
