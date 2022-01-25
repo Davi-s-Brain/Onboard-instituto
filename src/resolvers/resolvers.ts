@@ -1,5 +1,6 @@
-import { User } from "../entity/user";
-import { getRepository } from "typeorm";
+import { User } from "../entity/user"
+import { getRepository } from "typeorm"
+const bcrypt = require("bcryptjs")
 
 export const resolvers = {
   Query: {
@@ -21,16 +22,16 @@ export const resolvers = {
       if (password) {
         throw new Error("A senha precisa ter ao menos 6 caracteres, uma letra e um número")
       }
-
+      
       if (user) {
         throw new Error ("E-mail já existente. Cadastre outro e-mail.")
       }
-
+      
       const newUser = new User()
       newUser.name = args.data.name
       newUser.email = args.data.email
       newUser.birthday = args.data.birthday
-      newUser.password = args.data.password
+      newUser.password = bcrypt.hashSync(args.data.password, 8)
       
       await userRepository.save(newUser)
       
