@@ -15,23 +15,31 @@ export const resolvers = {
       const userRepository = getRepository(User)
       const user = await userRepository.findOne({ where: { email: args.data.email } })
       
-      const alphabet = args.data.password.match(/^[A-Za-z]+$/)
-      const number = args.data.password.match(/^[0-9]+$/) 
-      const password = args.data.password.length < 6 || alphabet || number
+      const containsLetters = /^[A-Za-z]+$/
+      const containsNumbers = /^[0-9]+$/
+
+      const alphabet = containsLetters.exec(args.data.password)
+      const number = containsNumbers.exec(args.data.password)
+      const isValidPassword = args.data.password.length < 6 || alphabet || number
       
-      if (password) {
+      if (isValidPassword) {
         throw new Error("A senha precisa ter ao menos 6 caracteres, uma letra e um número")
       }
       
       if (user) {
         throw new Error ("E-mail já existente. Cadastre outro e-mail.")
       }
-      
+
+      async function createHash(text: string): Promise<string> {
+        const salt = await bcrypt.genSalt(8)
+        return await bcrypt.hash(text, salt).then(() => { return bcrypt.hash(text, salt) })
+      }
+
       const newUser = new User()
       newUser.name = args.data.name
       newUser.email = args.data.email
       newUser.birthday = args.data.birthday
-      newUser.password = bcrypt.hashSync(args.data.password, 8)
+      newUser.password = (await createHash(args.data.password)).toString()
       
       await userRepository.save(newUser)
       
