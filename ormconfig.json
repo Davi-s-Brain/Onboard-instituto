@@ -17,5 +17,6 @@
   "port": "5433",
   "username": "postgres",
   "password": "postgres",
-  "database": "tests"
+  "database": "test",
+  "sincronize": "true"
 }]
