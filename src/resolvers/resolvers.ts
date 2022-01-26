@@ -27,15 +27,14 @@ export const resolvers = {
 
       async function createHash(text: string): Promise<string> {
         const salt = await bcrypt.genSalt(8)
-        return await bcrypt.hash(text, salt).then(() => { return bcrypt.hash(text, salt) })
+        return bcrypt.hash(text, salt).then(() => { return bcrypt.hash(text, salt) })
       }
 
       const newUser = new User()
       newUser.name = args.data.name
       newUser.email = args.data.email
       newUser.birthday = args.data.birthday
-      newUser.password = (await createHash(args.data.password)).toString()
-      
+      newUser.password = await createHash(args.data.password)
       await userRepository.save(newUser)
       
       return newUser
