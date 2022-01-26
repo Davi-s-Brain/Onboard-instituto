@@ -1,27 +1,19 @@
 import 'reflect-metadata'
-import { createConnection, ConnectionManager, getRepository } from 'typeorm';
+import { createConnection, ConnectionManager } from 'typeorm';
 import { User } from './entity/user'
 
-const connectionManager = new ConnectionManager()
+export const connection = async () => {
+  const connectionManager = new ConnectionManager()
 
-createConnection().then(async () => {
+  return createConnection().then(async () => {
   const connection = connectionManager.create({
     type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: 'postgres',
-    database: 'postgres',
+    url: 'postgres://postgres:postgres@localhost/postgres',
     entities: [User],
     synchronize: true
   });
   await connection.connect()
+  console.log('Banco conectado com sucesso 😎')
 
-  const userRepository = connection.getRepository(User)
-
-  const user = new User()
-  user.nome = 'Davi'
-  user.email = 'davi@example.com'
-  await userRepository.save(user)
-
-}).catch(error => {console.log(error)})
+  }).catch(error => {console.log(error)})
+} 
