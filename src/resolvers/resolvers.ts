@@ -27,7 +27,7 @@ export const resolvers = {
 
       async function createHash(text: string): Promise<string> {
         const salt = await bcrypt.genSalt(8)
-        return bcrypt.hash(text, salt).then(() => { return bcrypt.hash(text, salt) })
+        return bcrypt.hash(text, salt)
       }
 
       const newUser = new User()
