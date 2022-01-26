@@ -15,14 +15,9 @@ export const resolvers = {
       const userRepository = getRepository(User)
       const user = await userRepository.findOne({ where: { email: args.data.email } })
       
-      const containsLetters = /^[A-Za-z]+$/
-      const containsNumbers = /^[0-9]+$/
-
-      const alphabet = containsLetters.exec(args.data.password)
-      const number = containsNumbers.exec(args.data.password)
-      const isValidPassword = args.data.password.length < 6 || alphabet || number
-      
-      if (isValidPassword) {
+      const isValidPassword = /(?=.*[A-za-z])(?=.*[0-9])[A-Za-z\d]{6,}/
+       
+      if (!isValidPassword.test(args.data.password)) {
         throw new Error("A senha precisa ter ao menos 6 caracteres, uma letra e um número")
       }
       
