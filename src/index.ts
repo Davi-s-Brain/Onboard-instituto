@@ -1,9 +1,9 @@
 import "reflect-metadata"
 import { ApolloServer } from "apollo-server"
-import { connection } from "./database";
+import { setup } from "./setup";
 import { typeDefs } from "./schema/typedefs"
 import { resolvers } from "./resolvers/resolvers"
 
-connection()
+setup()
 const server = new ApolloServer({ typeDefs, resolvers })
 server.listen().then(( { url }:{ url:string } ) => console.log( `Server started at ${url} 🤓` ) )

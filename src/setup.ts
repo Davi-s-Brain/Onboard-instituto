@@ -1,8 +1,11 @@
 import 'reflect-metadata'
+import { ApolloServer } from 'apollo-server';
 import { createConnection, ConnectionManager } from 'typeorm';
 import { User } from './entity/user'
+import { resolvers } from './resolvers/resolvers';
+import { typeDefs } from './schema/typedefs';
 
-export const connection = async () => {
+const connection = async () => {
   const connectionManager = new ConnectionManager()
 
   return createConnection().then(async () => {
@@ -17,3 +20,13 @@ export const connection = async () => {
 
   }).catch(error => {console.log(error)})
 } 
+
+const server = async () => {
+  const server = new ApolloServer({ typeDefs, resolvers })
+  server.listen().then(( { url }:{ url:string } ) => console.log( `Server started at ${url} 🤓` ) )
+}
+
+export const setup = async () => {
+  await connection()
+  await server()
+}
