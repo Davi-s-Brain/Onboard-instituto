@@ -1,23 +1,13 @@
-const request = require("supertest")
-const { expect } = require('chai')
-  import { ApolloServer, gql } from "apollo-server"
+import request from "supertest"
+import { expect } from "chai"
+import { ApolloServer } from "apollo-server"
+import { typeDefs } from "../src/schema/typedefs"
+import { resolvers } from "../src/resolvers/resolvers"
+
 
 describe('Communication with the server', function() {
   before(function() {
-
-    const typeDefs = gql `
-      type Query {
-        hello: String
-      }
-    `
-    
-    const resolvers = {
-      Query: {
-        hello: () => 'Hello world'
-      }
-    }
-  
-    const server = new ApolloServer({typeDefs, resolvers})
+    const server = new ApolloServer({ typeDefs, resolvers })
     server.listen().then(( { url }:{ url:string } ) => console.log( `Server started at ${url} 🤓` ) )
   })
 
@@ -30,9 +20,8 @@ describe('Communication with the server', function() {
   it('should return Hello world', async function() {
     const expectedResponse = {"data": {"hello": "Hello world"}}
     const response = await request('localhost:4000').post('/').send({query})
-    
+
     expect(response.statusCode).to.equal(200)
-    expect(JSON.stringify(response.body)).to.equal(JSON.stringify(expectedResponse))
-    console.log(JSON.stringify(response.body))
+    expect(response.body).to.deep.equal(expectedResponse)
   })  
 })

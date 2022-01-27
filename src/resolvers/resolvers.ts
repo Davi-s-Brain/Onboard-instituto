@@ -4,6 +4,8 @@ const bcrypt = require("bcryptjs")
 
 export const resolvers = {
   Query: {
+    hello: () => 'Hello world',
+
     users: async () => {
       const userRepository = getRepository(User)
       const users = await userRepository.find()

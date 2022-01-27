@@ -21,6 +21,7 @@ export const typeDefs = gql`
   }
 
   type Query {
-    users: [User]
+    hello: String
+    users: [User],
   } 
 `
