@@ -3,10 +3,11 @@ import { expect } from "chai"
 import { ApolloServer } from "apollo-server"
 import { typeDefs } from "../src/schema/typedefs"
 import { resolvers } from "../src/resolvers/resolvers"
-
+import { connection } from "../src/database"
 
 describe('Communication with the server', function() {
-  before(function() {
+  before(async function() {
+    await connection()
     const server = new ApolloServer({ typeDefs, resolvers })
     server.listen().then(( { url }:{ url:string } ) => console.log( `Server started at ${url} 🤓` ) )
   })

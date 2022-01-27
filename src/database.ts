@@ -8,7 +8,7 @@ export const connection = async () => {
   return createConnection().then(async () => {
   const connection = connectionManager.create({
     type: 'postgres',
-    url: 'postgres://postgres:postgres@localhost/postgres',
+    url: process.env.DB_URL,
     entities: [User],
     synchronize: true
   });
