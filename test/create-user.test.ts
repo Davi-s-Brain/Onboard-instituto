@@ -68,28 +68,23 @@ export const testCreateUser = async () => {
 
     it("should return an error if the user already exists", async () => {
       const userRepository = getRepository(User)
-      const data = { email: "davi@example.com", name: "Davi", password: "abacate123", birthday:"14-11-2004"}
-
+      
       async function createHash(text: string): Promise<string> {
         const salt = await bcrypt.genSalt(8)
         return bcrypt.hash(text, salt)
       }
 
-      const hashedPassword = await createHash(data.password)
+      const data:any = { 
+        email: "davi@example.com", 
+        name: "Davi", 
+        password: await createHash("abacate123"), 
+        birthday:"14-11-2004"
+      }
 
-      const userSubject = new User()
-      userSubject.name = data.name
-      userSubject.email = data.email
-      userSubject.birthday = data.birthday
-      userSubject.password = hashedPassword
-
-      await userRepository.save(userSubject)
-      const response = await createUserMutation(userSubject)
-      await userRepository.delete(userSubject)
+      const response = await createUserMutation(data)
 
       const expectedResponse = { message: "E-mail já existente. Cadastre outro e-mail.", code: 200}
       
-      console.log(response.body.errors)
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message)
       expect(response.statusCode).to.be.equal(expectedResponse.code)
     })
