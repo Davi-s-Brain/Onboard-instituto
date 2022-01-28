@@ -81,6 +81,7 @@ export const testCreateUser = async () => {
         birthday:"14-11-2004"
       }
 
+      
       const response = await createUserMutation(data)
 
       const expectedResponse = { message: "E-mail já existente. Cadastre outro e-mail.", code: 200}
