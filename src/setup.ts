@@ -4,6 +4,7 @@ import { createConnection, ConnectionManager } from 'typeorm';
 import { User } from './entity/user'
 import { resolvers } from './resolvers/resolvers';
 import { typeDefs } from './schema/typedefs';
+import * as dotenv from "dotenv"
 
 const connection = async () => {
   const connectionManager = new ConnectionManager()
@@ -23,7 +24,7 @@ const connection = async () => {
 
 const server = async () => {
   const server = new ApolloServer({ typeDefs, resolvers })
-  server.listen(/*{port: 4001}*/ ).then(( { url }:{ url:string } ) => console.log( `Server started at ${url} 🤓` ) )
+  server.listen({port: 4000} ).then(( { url }:{ url:string } ) => console.log( `Server started at ${url} 🤓` ) )
 }
 
 export const setup = async () => {
