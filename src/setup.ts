@@ -23,7 +23,7 @@ const connection = async () => {
 
 const server = async () => {
   const server = new ApolloServer({ typeDefs, resolvers })
-  server.listen().then(( { url }:{ url:string } ) => console.log( `Server started at ${url} 🤓` ) )
+  server.listen(/*{port: 4001}*/ ).then(( { url }:{ url:string } ) => console.log( `Server started at ${url} 🤓` ) )
 }
 
 export const setup = async () => {

@@ -15,12 +15,18 @@ export const resolvers = {
   Mutation: {
     createUser:async (_parent:any, args: {data:{name:string, email:string, birthday:string, password:string}}) => {
       const userRepository = getRepository(User)
+
       const user = await userRepository.findOne({ where: { email: args.data.email } })
-      
       const isValidPassword = /(?=.*[A-za-z])(?=.*[0-9])[A-Za-z\d]{6,}/
+      const isValidEmail = /^[a-zA-Z0-9.!#$%&'*+\=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+
        
       if (!isValidPassword.test(args.data.password)) {
         throw new Error("A senha precisa ter ao menos 6 caracteres, uma letra e um número")
+      }
+
+      if(!isValidEmail.test(args.data.email)) {
+        throw new Error("Formato de email inválido, tente um diferente")
       }
       
       if (user) {
