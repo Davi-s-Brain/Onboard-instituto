@@ -13,10 +13,10 @@ services:
   testdb:
     image: postgres:11.2
     ports:
-      - "5433:5433"
+      - "5433:5432"
     volumes:
-      - ./db/dumps:/app-db-dumps
+      - ./db/dumps:/app-db-dumpsteste
     environment:
-      - POSTGRES_USER = postgres
-      - POSTGRES_PASSWORD = postgres
-      - POSTGRES_DB = test
+      - POSTGRES_USER = davi
+      - POSTGRES_PASSWORD = davi
+      - POSTGRES_DB = tests

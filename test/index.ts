@@ -1,27 +1,17 @@
-import request from "supertest"
-import { expect } from "chai"
-import { ApolloServer } from "apollo-server"
-import { typeDefs } from "../src/schema/typedefs"
-import { resolvers } from "../src/resolvers/resolvers"
+import { getConnection, getRepository } from "typeorm"
+import { User } from "../src/entity/user"
+import { setup } from "../src/setup"
+import { testCreateUser } from "./create-user.test"
+import { testHello } from "./hello.test"
 
+before(async() => {
+  await setup()
+})
 
-describe('Communication with the server', function() {
-  before(function() {
-    const server = new ApolloServer({ typeDefs, resolvers })
-    server.listen().then(( { url }:{ url:string } ) => console.log( `Server started at ${url} 🤓` ) )
-  })
+testHello()
+testCreateUser()
 
-  const query = `
-    query {
-      hello
-    } 
-  `
-
-  it('should return Hello world', async function() {
-    const expectedResponse = {"data": {"hello": "Hello world"}}
-    const response = await request('localhost:4000').post('/').send({query})
-
-    expect(response.statusCode).to.equal(200)
-    expect(response.body).to.deep.equal(expectedResponse)
-  })  
+afterEach(async() => {
+  const repositories = await getConnection().getRepository(User)
+  await repositories.clear()
 })
