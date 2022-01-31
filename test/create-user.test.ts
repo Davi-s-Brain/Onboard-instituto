@@ -29,8 +29,10 @@ export const testCreateUser = async () => {
 
       const expectedResponse = { 
         message: "A senha precisa ter ao menos 6 caracteres, uma letra e um número", 
-        code: 200
+        code: 400
       }
+
+      console.log(response.body.errors[0].message)
 
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message)
       expect(response.statusCode).to.be.equal(expectedResponse.code)
@@ -42,7 +44,7 @@ export const testCreateUser = async () => {
 
       const expectedResponse = { 
         message: "Formato de email inválido, tente no formato email@exemplo.com",
-        code: 200
+        code: 400
       }
 
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message)
@@ -89,7 +91,7 @@ export const testCreateUser = async () => {
         birthday:"14-11-2004"
       }
       const response = await createUserMutation(data)
-      const expectedResponse = { message: "E-mail já existente. Cadastre outro e-mail.", code: 200}
+      const expectedResponse = { message: "E-mail já existente. Cadastre outro e-mail.", code: 400}
       await userRepository.save(data)
       
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message)
