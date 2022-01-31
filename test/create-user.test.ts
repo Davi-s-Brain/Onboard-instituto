@@ -32,10 +32,8 @@ export const testCreateUser = async () => {
         code: 400
       }
 
-      console.log(response.body.errors[0].message)
-
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message)
-      expect(response.statusCode).to.be.equal(expectedResponse.code)
+      expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code)
     })
 
     it("should return an error if the email is invalid", async() => {
@@ -48,7 +46,7 @@ export const testCreateUser = async () => {
       }
 
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message)
-      expect(response.statusCode).to.be.equal(expectedResponse.code)
+      expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code)
     })
 
     it("should save user at database and return user name and email at response",async () => {
@@ -95,7 +93,7 @@ export const testCreateUser = async () => {
       await userRepository.save(data)
       
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message)
-      expect(response.statusCode).to.be.equal(expectedResponse.code)
+      expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code)
     })
   })
 }
