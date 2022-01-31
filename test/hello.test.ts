@@ -12,7 +12,7 @@ export const testHello = async () => {
   
     it('should return Hello world', async function() {
       const expectedResponse = {"data": {"hello": "Hello world"}}
-      const response = await request('localhost:4000').post('/').send({query})
+      const response = await request('localhost:4001').post('/').send({query})
   
       expect(response.statusCode).to.equal(200)
       expect(response.body).to.deep.equal(expectedResponse)

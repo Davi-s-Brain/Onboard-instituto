@@ -26,7 +26,7 @@ export const resolvers = {
       }
 
       if(!isValidEmail.test(args.data.email)) {
-        throw new Error("Formato de email inválido, tente um diferente")
+        throw new Error("Formato de email inválido, tente no formato email@exemplo.com")
       }
       
       if (user) {
