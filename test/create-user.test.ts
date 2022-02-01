@@ -29,11 +29,11 @@ export const testCreateUser = async () => {
 
       const expectedResponse = { 
         message: "A senha precisa ter ao menos 6 caracteres, uma letra e um número", 
-        code: 200
+        code: 400
       }
 
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message)
-      expect(response.statusCode).to.be.equal(expectedResponse.code)
+      expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code)
     })
 
     it("should return an error if the email is invalid", async() => {
@@ -42,11 +42,11 @@ export const testCreateUser = async () => {
 
       const expectedResponse = { 
         message: "Formato de email inválido, tente no formato email@exemplo.com",
-        code: 200
+        code: 400
       }
 
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message)
-      expect(response.statusCode).to.be.equal(expectedResponse.code)
+      expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code)
     })
 
     it("should save user at database and return user name and email at response",async () => {
@@ -83,17 +83,18 @@ export const testCreateUser = async () => {
       }
 
       const data = { 
-        email: "davi@example.com",  
-        name: "Davi", 
-        password: await createHash("abacate123"), 
-        birthday:"14-11-2004"
+        email: "email@email.com",  
+        name: "Josenildo", 
+        password: await createHash("ssass12A"), 
+        birthday:"21-04-2002"
       }
-      const response = await createUserMutation(data)
-      const expectedResponse = { message: "E-mail já existente. Cadastre outro e-mail.", code: 200}
-      await userRepository.save(data)
+
+      const response2 = await createUserMutation(data)
+      await userRepository.save(data) 
       
-      expect(response.body.errors[0].message).to.be.equal(expectedResponse.message)
-      expect(response.statusCode).to.be.equal(expectedResponse.code)
+      const expectedResponse = { message: "E-mail já existente. Cadastre outro e-mail.", code: 400}
+      expect(response2.body.errors[0].message).to.be.equal(expectedResponse.message)
+      expect(response2.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code)
     })
   })
 }

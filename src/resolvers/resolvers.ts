@@ -1,5 +1,6 @@
 import { User } from "../entity/user"
 import { getRepository } from "typeorm"
+import { CustomError } from "../error/error"
 const bcrypt = require("bcryptjs")
 
 export const resolvers = {
@@ -20,17 +21,16 @@ export const resolvers = {
       const isValidPassword = /(?=.*[A-za-z])(?=.*[0-9])[A-Za-z\d]{6,}/
       const isValidEmail = /^[a-zA-Z0-9.!#$%&'*+\=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 
-       
       if (!isValidPassword.test(args.data.password)) {
-        throw new Error("A senha precisa ter ao menos 6 caracteres, uma letra e um número")
+        throw new CustomError("A senha precisa ter ao menos 6 caracteres, uma letra e um número", 400)
       }
 
       if(!isValidEmail.test(args.data.email)) {
-        throw new Error("Formato de email inválido, tente no formato email@exemplo.com")
+        throw new CustomError("Formato de email inválido, tente no formato email@exemplo.com", 400)
       }
       
       if (user) {
-        throw new Error ("E-mail já existente. Cadastre outro e-mail.")
+        throw new CustomError("E-mail já existente. Cadastre outro e-mail.", 400)
       }
 
       async function createHash(text: string): Promise<string> {
