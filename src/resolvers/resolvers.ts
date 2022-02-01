@@ -21,7 +21,6 @@ export const resolvers = {
       const isValidPassword = /(?=.*[A-za-z])(?=.*[0-9])[A-Za-z\d]{6,}/
       const isValidEmail = /^[a-zA-Z0-9.!#$%&'*+\=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 
-       
       if (!isValidPassword.test(args.data.password)) {
         throw new CustomError("A senha precisa ter ao menos 6 caracteres, uma letra e um número", 400)
       }

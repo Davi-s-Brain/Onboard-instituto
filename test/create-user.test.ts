@@ -83,17 +83,18 @@ export const testCreateUser = async () => {
       }
 
       const data = { 
-        email: "davi@example.com",  
-        name: "Davi", 
-        password: await createHash("abacate123"), 
-        birthday:"14-11-2004"
+        email: "email@email.com",  
+        name: "Josenildo", 
+        password: await createHash("ssass12A"), 
+        birthday:"21-04-2002"
       }
-      const response = await createUserMutation(data)
-      const expectedResponse = { message: "E-mail já existente. Cadastre outro e-mail.", code: 400}
-      await userRepository.save(data)
+
+      const response2 = await createUserMutation(data)
+      await userRepository.save(data) 
       
-      expect(response.body.errors[0].message).to.be.equal(expectedResponse.message)
-      expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code)
+      const expectedResponse = { message: "E-mail já existente. Cadastre outro e-mail.", code: 400}
+      expect(response2.body.errors[0].message).to.be.equal(expectedResponse.message)
+      expect(response2.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code)
     })
   })
 }
