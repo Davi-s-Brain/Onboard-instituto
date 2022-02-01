@@ -1,6 +1,8 @@
 import { User } from "../entity/user"
 import { getRepository } from "typeorm"
 import { CustomError } from "../error/error"
+import { validator } from "../confirmation/validator"
+import { hashPassword } from "../confirmation/passwordHash"
 const bcrypt = require("bcryptjs")
 
 export const resolvers = {
@@ -13,19 +15,56 @@ export const resolvers = {
       return users
     }
   },
-  Mutation: {
+  Mutation: { 
+    login:async (_parent:any, args: {data: {email: string, password: string}}) => {
+      const { email, password } = args.data
+
+      if (!validator.password(args.data.password)) {
+        throw new CustomError("A senha precisa ter ao menos 6 caracteres, uma letra e um número", 400)
+      }
+
+      if (!validator.email(args.data.email)) {
+        throw new CustomError("Formato de email inválido, tente no formato email@exemplo.com", 400)
+      }
+
+      const userRepository = getRepository(User)
+      const userDatabase = await userRepository.findOne({ email })
+      if (!userDatabase) {
+        return new CustomError("Email ou senha inválidos",400)
+      }
+
+      const hashSupervisor = new hashPassword
+      const verifyPassword = await hashSupervisor.compare(password, userDatabase.password) 
+      if (!verifyPassword) {
+        throw new CustomError("Email ou senha inválidos",400)
+      }
+
+      const token = "dado mockado por enquanto"
+
+      const response = {
+        login: {
+          user: { 
+            id:userDatabase.id, 
+            name:userDatabase.name,
+            email: userDatabase.email, 
+            birthdate:userDatabase.birthday
+          }, 
+          token
+        }
+      }
+
+      return response
+  },
     createUser:async (_parent:any, args: {data:{name:string, email:string, birthday:string, password:string}}) => {
       const userRepository = getRepository(User)
 
       const user = await userRepository.findOne({ where: { email: args.data.email } })
-      const isValidPassword = /(?=.*[A-za-z])(?=.*[0-9])[A-Za-z\d]{6,}/
-      const isValidEmail = /^[a-zA-Z0-9.!#$%&'*+\=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 
-      if (!isValidPassword.test(args.data.password)) {
+      if (!validator.password(args.data.password)) {
         throw new CustomError("A senha precisa ter ao menos 6 caracteres, uma letra e um número", 400)
       }
 
-      if(!isValidEmail.test(args.data.email)) {
+      if(!validator.email(args.data.email)) {
         throw new CustomError("Formato de email inválido, tente no formato email@exemplo.com", 400)
       }
       

@@ -16,8 +16,23 @@ export const typeDefs = gql`
     password: String!
   }
 
+  input LoginInput { 
+    email: String!, 
+    password: String!
+  }
+
+  type LoginAuth { 
+    login: Login
+  }
+
+  type Login {
+    user: User,
+    token: String
+  }
+
   type Mutation {
     createUser(data: UserInput): User!
+    login(data: LoginInput): LoginAuth
   }
 
   type Query {

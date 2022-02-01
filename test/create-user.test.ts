@@ -2,7 +2,7 @@ import request from "supertest"
 import { expect } from "chai"
 import { User } from "../src/entity/user"
 import { getRepository } from "typeorm"
-const bcrypt = require("bcryptjs")
+import { hashPassword } from "../src/confirmation/passwordHash"
 
 export const testCreateUser = async () => {
   const query = `
@@ -52,10 +52,11 @@ export const testCreateUser = async () => {
     it("should save user at database and return user name and email at response",async () => {
       const userRepository = getRepository(User)
       const data = { email: "davi@example.com", name: "Hermanoteu", password: "1234acbd", birthday:"28-06-2002"}
+      const hashSupervisor = new hashPassword 
 
       const response = await createUserMutation(data)
       const userSaved: User | undefined = await userRepository.findOne( { email: data.email } )
-      const isPasswordEqual = await bcrypt.compare(data.password, userSaved!.password)  
+      const isPasswordEqual = await hashSupervisor.compare(data.password, userSaved!.password)  
       await userRepository.delete(userSaved!)
       const expectedResponse = data
 
@@ -77,15 +78,11 @@ export const testCreateUser = async () => {
 
     it("should return an error if the user already exists", async () => {
       const userRepository = getRepository(User)
-      async function createHash(text: string): Promise<string> {
-        const salt = await bcrypt.genSalt(8)
-        return bcrypt.hash(text, salt)
-      }
-
+      const hashSupervisor = new hashPassword
       const data = { 
         email: "email@email.com",  
         name: "Josenildo", 
-        password: await createHash("ssass12A"), 
+        password: await hashSupervisor.hash("ssass12A"), 
         birthday:"21-04-2002"
       }
 
