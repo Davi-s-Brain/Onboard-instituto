@@ -38,9 +38,9 @@ export const testlogin = async () => {
       expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code)
     })
 
-    it("should return ab error if the password doesn't match", async () => {
+    it("should return an error if the password doesn't match", async () => {
       const userRepository = getRepository(User)
-      const hashSupervisor = new hashPassword
+      const hashSupervisor = new hashPassword()
       const data = { email: "davi@email.com", password: "abcdef1"}
       const dataUserTest = { name: "Davi", email: "davi@email.com", password: "abcdef2", birthday:"15-06-2001"}
       const hashedPassword = await hashSupervisor.hash(dataUserTest.password)

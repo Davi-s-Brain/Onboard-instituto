@@ -52,7 +52,7 @@ export const testCreateUser = async () => {
     it("should save user at database and return user name and email at response",async () => {
       const userRepository = getRepository(User)
       const data = { email: "davi@example.com", name: "Hermanoteu", password: "1234acbd", birthday:"28-06-2002"}
-      const hashSupervisor = new hashPassword 
+      const hashSupervisor = new hashPassword()
 
       const response = await createUserMutation(data)
       const userSaved: User | undefined = await userRepository.findOne( { email: data.email } )
@@ -78,7 +78,7 @@ export const testCreateUser = async () => {
 
     it("should return an error if the user already exists", async () => {
       const userRepository = getRepository(User)
-      const hashSupervisor = new hashPassword
+      const hashSupervisor = new hashPassword()
       const data = { 
         email: "email@email.com",  
         name: "Josenildo", 
