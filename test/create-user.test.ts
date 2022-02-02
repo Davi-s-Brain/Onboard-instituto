@@ -82,9 +82,10 @@ export const testCreateUser = async () => {
       const data = { 
         email: "email@email.com",  
         name: "Josenildo", 
-        password: await hashSupervisor.hash("ssass12A"), 
-        birthday:"21-04-2002"
+        password: "ssass12A", 
+        birthday: "21-04-2002"
       }
+      data.password = await hashSupervisor.hash("ssass12A")
 
       const response2 = await createUserMutation(data)
       await userRepository.save(data) 

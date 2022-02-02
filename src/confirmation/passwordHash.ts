@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs")
 
 export class hashPassword {
   public async hash(text: string): Promise<string> {
-    const rounds = 7 
+    const rounds = process.env.ROUND 
     const salt = await bcrypt.genSalt(rounds)
     return bcrypt.hash(text, salt)
   }

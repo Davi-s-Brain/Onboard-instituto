@@ -44,15 +44,15 @@ export const testlogin = async () => {
       const data = { email: "davi@email.com", password: "abcdef1"}
       const dataUserTest = { name: "Davi", email: "davi@email.com", password: "abcdef2", birthday:"15-06-2001"}
       const hashedPassword = await hashSupervisor.hash(dataUserTest.password)
-
       const testUser = new User()
       testUser.name = dataUserTest.name
       testUser.email = dataUserTest.email
       testUser.birthday = dataUserTest.birthday
       testUser.password = hashedPassword
+
       await userRepository.save(testUser)
       const response = await createLoginMutation(data)
-      await userRepository.save(testUser)
+      await userRepository.delete(testUser)
 
       const expectedResponse = { message:"Email ou senha inválidos", code: 400}
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message)
@@ -109,7 +109,7 @@ export const testlogin = async () => {
           token: 'alguma coisa'
         },
       }
-      
+
       expect(response.body.data.login.login.user).to.deep.equal(expectedResponse.login.user)
     })
   })
