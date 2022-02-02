@@ -51,8 +51,8 @@ export const testlogin = async () => {
       testUser.email = dataUserTest.email;
       testUser.birthday = dataUserTest.birthday;
       testUser.password = hashedPassword;
-
       await userRepository.save(testUser);
+      
       const response = await createLoginMutation(data);
       await userRepository.delete(testUser);
 
@@ -114,7 +114,6 @@ export const testlogin = async () => {
           token: 'alguma coisa',
         },
       };
-
       expect(response.body.data.login.login.user).to.deep.equal(expectedResponse.login.user);
       clearDatabase();
     });

@@ -26,13 +26,13 @@ export const testCreateUser = async () => {
   describe('test to create a user', function () {
     it("should return an error if the password isn't valid", async () => {
       const data = { email: 'testando@teste.com', name: 'José', password: 'abcde', birthday: '14-09-1981' };
+
       const response = await createUserMutation(data);
 
       const expectedResponse = {
         message: 'A senha precisa ter ao menos 6 caracteres, uma letra e um número',
         code: 400,
       };
-
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message);
       expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code);
       clearDatabase();
@@ -40,13 +40,13 @@ export const testCreateUser = async () => {
 
     it('should return an error if the email is invalid', async () => {
       const data = { email: 'testadas.com', name: 'André', password: 'abc1234', birthday: '14-08-1932' };
+
       const response = await createUserMutation(data);
 
       const expectedResponse = {
         message: 'Formato de email inválido, tente no formato email@exemplo.com',
         code: 400,
       };
-
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message);
       expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code);
       clearDatabase();
@@ -61,8 +61,8 @@ export const testCreateUser = async () => {
       const userSaved: User | undefined = await userRepository.findOne({ email: data.email });
       const isPasswordEqual = await hashSupervisor.compare(data.password, userSaved.password);
       await userRepository.delete(userSaved);
-      const expectedResponse = data;
 
+      const expectedResponse = data;
       expect(response.body.data.createUser).to.deep.equal({
         id: userSaved?.id.toString(),
         name: userSaved?.name,
