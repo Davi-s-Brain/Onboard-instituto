@@ -1,4 +1,4 @@
-import "reflect-metadata"
-import { setup } from "./setup";
+import 'reflect-metadata';
+import { setup } from './setup';
 
-setup()
+setup();

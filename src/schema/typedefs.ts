@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server'
+import { gql } from 'apollo-server';
 
 export const typeDefs = gql`
   type User {
@@ -9,24 +9,24 @@ export const typeDefs = gql`
     birthday: String!
   }
 
-  input UserInput { 
-    name: String!, 
-    email: String!, 
-    birthday: String!, 
+  input UserInput {
+    name: String!
+    email: String!
+    birthday: String!
     password: String!
   }
 
-  input LoginInput { 
-    email: String!, 
+  input LoginInput {
+    email: String!
     password: String!
   }
 
-  type LoginAuth { 
+  type LoginAuth {
     login: Login
   }
 
   type Login {
-    user: User,
+    user: User
     token: String
   }
 
@@ -37,6 +37,6 @@ export const typeDefs = gql`
 
   type Query {
     hello: String
-    users: [User],
-  } 
-`
+    users: [User]
+  }
+`;

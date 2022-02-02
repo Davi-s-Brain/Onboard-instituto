@@ -38,8 +38,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "connect": "ts-node-dev src/database.ts",
-    "test": "cross-env TEST=true mocha -r ts-node/register test/index.ts",
-    "lint": "eslint --fix --ext .js,.jsx ."
+    "test": "cross-env TEST=true mocha -r ts-node/register test/index.ts"
   },
   "repository": {
     "type": "git",
