@@ -30,13 +30,13 @@ export const resolvers = {
       const userRepository = getRepository(User)
       const userDatabase = await userRepository.findOne({ email })
       if (!userDatabase) {
-        return new CustomError("Email ou senha inválidos",400)
+        return new CustomError( "Email ou senha inválidos", 400 )
       }
 
       const hashSupervisor = new hashPassword
       const verifyPassword = await hashSupervisor.compare(password, userDatabase.password) 
       if (!verifyPassword) {
-        throw new CustomError("Email ou senha inválidos",400)
+        throw new CustomError( "Email ou senha inválidos", 400 )
       }
 
       const token = "dado mockado por enquanto"
@@ -44,15 +44,15 @@ export const resolvers = {
       const response = {
         login: {
           user: { 
-            id:userDatabase.id, 
-            name:userDatabase.name,
+            id: userDatabase.id, 
+            name: userDatabase.name,
             email: userDatabase.email, 
-            birthdate:userDatabase.birthday
+            birthday: userDatabase.birthday
           }, 
           token
         }
       }
-
+      console.log(userDatabase.birthday)
       return response
   },
     createUser:async (_parent:any, args: {data:{name:string, email:string, birthday:string, password:string}}) => {
