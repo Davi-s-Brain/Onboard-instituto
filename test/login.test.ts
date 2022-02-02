@@ -82,7 +82,7 @@ export const testlogin = async () => {
       expect(response.body.errors[0].extensions.exception.code).to.equal(expectedResponse.code);  
     })
 
-    it("should get the correct data", async () => {
+    it("should get the correct data", async()         => {
       const userRepository = getRepository(User)
       const hashSupervisor = new hashPassword()
       const data = { email:"davi@email.com", password:"123abcd" }
