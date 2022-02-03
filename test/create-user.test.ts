@@ -1,9 +1,8 @@
 import * as request from 'supertest';
 import { expect } from 'chai';
 import { User } from '../src/entity/user';
-import { getRepository } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 import { hashPassword } from '../src/confirmation/passwordHash';
-import { clearDatabase } from '../src/confirmation/clearDB';
 
 export const testCreateUser = async () => {
   const query = `
@@ -24,6 +23,11 @@ export const testCreateUser = async () => {
   }
 
   describe('test to create a user', function () {
+    afterEach(async () => {
+      const repositories = await getConnection().getRepository(User);
+      await repositories.clear();
+    });
+
     it("should return an error if the password isn't valid", async () => {
       const data = { email: 'testando@teste.com', name: 'José', password: 'abcde', birthday: '14-09-1981' };
 
@@ -35,7 +39,6 @@ export const testCreateUser = async () => {
       };
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message);
       expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code);
-      clearDatabase();
     });
 
     it('should return an error if the email is invalid', async () => {
@@ -49,7 +52,6 @@ export const testCreateUser = async () => {
       };
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message);
       expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code);
-      clearDatabase();
     });
 
     it('should save user at database and return user name and email at response', async () => {
@@ -77,7 +79,6 @@ export const testCreateUser = async () => {
       });
       expect(isPasswordEqual).to.equal(true);
       expect(userSaved?.password).to.not.equal(data.password);
-      clearDatabase();
     });
 
     it('should return an error if the user already exists', async () => {
@@ -97,7 +98,6 @@ export const testCreateUser = async () => {
       const expectedResponse = { message: 'E-mail já existente. Cadastre outro e-mail.', code: 400 };
       expect(response2.body.errors[0].message).to.be.equal(expectedResponse.message);
       expect(response2.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code);
-      clearDatabase();
     });
   });
 };

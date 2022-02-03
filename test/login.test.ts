@@ -1,9 +1,8 @@
 import * as request from 'supertest';
 import { expect } from 'chai';
 import { User } from '../src/entity/user';
-import { getRepository } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 import { hashPassword } from '../src/confirmation/passwordHash';
-import { clearDatabase } from '../src/confirmation/clearDB';
 
 export const testlogin = async () => {
   const query = `mutation Login($data: LoginInput!) {
@@ -26,6 +25,11 @@ export const testlogin = async () => {
   }
 
   describe('Login tests', function () {
+    afterEach(async () => {
+      const repositories = await getConnection().getRepository(User);
+      await repositories.clear();
+    });
+
     it('should return an error if password is in the wrong format', async () => {
       const data = { email: 'davi@email.com', password: 'abcde' };
 
@@ -37,7 +41,6 @@ export const testlogin = async () => {
       };
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message);
       expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code);
-      clearDatabase();
     });
 
     it("should return an error if the password doesn't match", async () => {
@@ -52,14 +55,13 @@ export const testlogin = async () => {
       testUser.birthday = dataUserTest.birthday;
       testUser.password = hashedPassword;
       await userRepository.save(testUser);
-      
+
       const response = await createLoginMutation(data);
       await userRepository.delete(testUser);
 
       const expectedResponse = { message: 'Email ou senha inválidos', code: 400 };
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message);
       expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code);
-      clearDatabase();
     });
 
     it("should return an arror if the email isn't valid", async () => {
@@ -73,7 +75,6 @@ export const testlogin = async () => {
       };
       expect(response.body.errors[0].message).to.equal(expectedResponse.message);
       expect(response.body.errors[0].extensions.exception.code).to.equal(expectedResponse.code);
-      clearDatabase();
     });
 
     it("should return an error if can't find the email in database", async () => {
@@ -84,7 +85,6 @@ export const testlogin = async () => {
       const expectedResponse = { message: 'Email ou senha inválidos', code: 400 };
       expect(response.body.errors[0].message).to.equal(expectedResponse.message);
       expect(response.body.errors[0].extensions.exception.code).to.equal(expectedResponse.code);
-      clearDatabase();
     });
 
     it('should get the correct data', async () => {
@@ -115,7 +115,6 @@ export const testlogin = async () => {
         },
       };
       expect(response.body.data.login.login.user).to.deep.equal(expectedResponse.login.user);
-      clearDatabase();
     });
   });
 };

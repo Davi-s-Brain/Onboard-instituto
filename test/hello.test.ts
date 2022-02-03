@@ -1,9 +1,15 @@
 import * as request from 'supertest';
 import { expect } from 'chai';
-import { clearDatabase } from '../src/confirmation/clearDB'
+import { getConnection } from 'typeorm';
+import { User } from '../src/entity/user';
 
 export const testHello = async () => {
   describe('Communication with the server', function () {
+    afterEach(async () => {
+      const repositories = await getConnection().getRepository(User);
+      await repositories.clear();
+    });
+
     const query = `
       query {
         hello
@@ -16,7 +22,6 @@ export const testHello = async () => {
 
       expect(response.statusCode).to.equal(200);
       expect(response.body).to.deep.equal(expectedResponse);
-      clearDatabase();
     });
   });
 };
