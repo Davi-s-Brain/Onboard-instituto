@@ -5,6 +5,13 @@ import { validator } from '../confirmation/validator';
 import { hashPassword } from '../confirmation/passwordHash';
 const bcrypt = require('bcryptjs');
 
+interface CreateUser {
+  name: string;
+  email: string;
+  birthday: string;
+  password: string;
+}
+
 export const resolvers = {
   Query: {
     hello: () => 'Hello world',
@@ -16,7 +23,7 @@ export const resolvers = {
     },
   },
   Mutation: {
-    login: async (_parent: any, args: { data: { email: string; password: string } }) => {
+    login: async (_parent: any, args: { data: CreateUser }) => {
       const { email, password } = args.data;
 
       if (!validator.password(args.data.password)) {
@@ -52,13 +59,9 @@ export const resolvers = {
           token,
         },
       };
-      console.log(userDatabase.birthday);
       return response;
     },
-    createUser: async (
-      _parent: any,
-      args: { data: { name: string; email: string; birthday: string; password: string } },
-    ) => {
+    createUser: async (_parent: any, args: { data: CreateUser }) => {
       const userRepository = getRepository(User);
 
       const user = await userRepository.findOne({ where: { email: args.data.email } });

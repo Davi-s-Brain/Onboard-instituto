@@ -54,10 +54,8 @@ export const testlogin = async () => {
       testUser.email = dataUserTest.email;
       testUser.birthday = dataUserTest.birthday;
       testUser.password = hashedPassword;
-      await userRepository.save(testUser);
 
       const response = await createLoginMutation(data);
-      await userRepository.delete(testUser);
 
       const expectedResponse = { message: 'Email ou senha inválidos', code: 400 };
       expect(response.body.errors[0].message).to.be.equal(expectedResponse.message);
@@ -93,7 +91,6 @@ export const testlogin = async () => {
       const data = { email: 'davi@email.com', password: '123abcd' };
       const dataUserTest = { email: 'davi@email.com', password: '123abcd', name: 'Davi', birthday: '16-05-1974' };
       const hashedPassword = await hashSupervisor.hash(dataUserTest.password);
-
       const userTest = new User();
       userTest.name = dataUserTest.name;
       userTest.email = dataUserTest.email;
