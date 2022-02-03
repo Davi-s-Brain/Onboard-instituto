@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server'
+import { gql } from 'apollo-server';
 
 export const typeDefs = gql`
   type User {
@@ -9,19 +9,35 @@ export const typeDefs = gql`
     birthday: String!
   }
 
-  input UserInput { 
-    name: String!, 
-    email: String!, 
-    birthday: String!, 
+  input UserInput {
+    id: ID!
+    name: String!
+    email: String!
+    birthday: String!
     password: String!
+  }
+
+  input LoginInput {
+    email: String!
+    password: String!
+  }
+
+  type LoginAuth {
+    login: Login
+  }
+
+  type Login {
+    user: User
+    token: String
   }
 
   type Mutation {
     createUser(data: UserInput): User!
+    login(data: LoginInput): LoginAuth
   }
 
   type Query {
     hello: String
-    users: [User],
-  } 
-`
+    users: [User]
+  }
+`;
