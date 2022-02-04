@@ -1,7 +1,7 @@
 import * as request from 'supertest';
 import { expect } from 'chai';
 import { User } from '../src/entity/user';
-import { getConnection, getRepository } from 'typeorm';
+import { getConnection } from 'typeorm';
 import { hashPassword } from '../src/confirmation/passwordHash';
 
 const query = `mutation Login($data: LoginInput!) {
@@ -24,8 +24,27 @@ async function createLoginMutation(variables: any) {
 }
 
 describe('Login tests', function () {
+  let repositories;
+  let user;
+  let hashSupervisor
+
+  before(async () => {
+    repositories = await getConnection().getRepository(User);
+    hashSupervisor = new hashPassword();
+  });
+
+  beforeEach(async () => {
+    const hashedPassword = await hashSupervisor.hash('batata123');
+    const userTest = Object.assign(new User(), {
+      name: 'Davi',
+      email: 'davi@email.com',
+      password: hashedPassword,
+      birthday: '16-05-1974',
+    });
+    user = await repositories.save(userTest);
+  });
+
   afterEach(async () => {
-    const repositories = await getConnection().getRepository(User);
     await repositories.clear();
   });
 
@@ -43,16 +62,7 @@ describe('Login tests', function () {
   });
 
   it("should return an error if the password doesn't match", async () => {
-    const userRepository = getRepository(User);
-    const hashSupervisor = new hashPassword();
     const data = { email: 'davi@email.com', password: 'abcdef1' };
-    const dataUserTest = { name: 'Davi', email: 'davi@email.com', password: 'abcdef2', birthday: '15-06-2001' };
-    const hashedPassword = await hashSupervisor.hash(dataUserTest.password);
-    const testUser = new User();
-    testUser.name = dataUserTest.name;
-    testUser.email = dataUserTest.email;
-    testUser.birthday = dataUserTest.birthday;
-    testUser.password = hashedPassword;
 
     const response = await createLoginMutation(data);
 
@@ -61,7 +71,7 @@ describe('Login tests', function () {
     expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code);
   });
 
-  it("should return an arror if the email isn't valid", async () => {
+  it("should return an error if the email isn't valid", async () => {
     const data = { email: 'davi.email.com', password: '123abcd1' };
 
     const response = await createLoginMutation(data);
@@ -85,27 +95,16 @@ describe('Login tests', function () {
   });
 
   it('should get the correct data', async () => {
-    const userRepository = getRepository(User);
-    const hashSupervisor = new hashPassword();
-    const data = { email: 'davi@email.com', password: '123abcd' };
-    const dataUserTest = { email: 'davi@email.com', password: '123abcd', name: 'Davi', birthday: '16-05-1974' };
-    const hashedPassword = await hashSupervisor.hash(dataUserTest.password);
-    const userTest = new User();
-    userTest.name = dataUserTest.name;
-    userTest.email = dataUserTest.email;
-    userTest.birthday = dataUserTest.birthday;
-    userTest.password = hashedPassword;
-    await userRepository.save(userTest);
+    const data = { email: 'davi@email.com', password: 'batata123' };
 
     const response = await createLoginMutation(data);
-    await userRepository.delete(userTest);
 
     const expectedResponse = {
       login: {
         user: {
-          id: userTest.id.toString(),
-          name: userTest.name,
-          email: userTest.email,
+          id: String(user.id),
+          name: user.name,
+          email: user.email,
         },
         token: 'alguma coisa',
       },

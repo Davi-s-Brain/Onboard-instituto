@@ -22,13 +22,32 @@ async function createUserMutation(variables: any) {
 }
 
 describe('test to create a user', function () {
+  let repositories;
+  let user;
+  let hashSupervisor;
+
+  before(async () => {
+    repositories = await getConnection().getRepository(User);
+    hashSupervisor = new hashPassword();
+  });
+
+  beforeEach(async () => {
+    const hashedPassword = await hashSupervisor.hash('batata123');
+    const userTest = Object.assign(new User(), {
+      name: 'Davi',
+      email: 'email@email.com',
+      password: hashedPassword,
+      birthday: '16-05-1974',
+    });
+    user = await repositories.save(userTest);
+  });
+
   afterEach(async () => {
-    const repositories = await getConnection().getRepository(User);
     await repositories.clear();
   });
 
   it("should return an error if the password isn't valid", async () => {
-    const data = { id: 2, email: 'testando@teste.com', name: 'José', password: 'abcde', birthday: '14-09-1981' };
+    const data = { email: 'testando@teste.com', name: 'José', password: 'abcde', birthday: '14-09-1981' };
 
     const response = await createUserMutation(data);
 
@@ -41,7 +60,7 @@ describe('test to create a user', function () {
   });
 
   it('should return an error if the email is invalid', async () => {
-    const data = { id: 2, email: 'testadas.com', name: 'André', password: 'abc1234', birthday: '14-08-1932' };
+    const data = { email: 'testadas.com', name: 'André', password: 'abc1234', birthday: '14-08-1932' };
 
     const response = await createUserMutation(data);
 
@@ -54,15 +73,12 @@ describe('test to create a user', function () {
   });
 
   it('should save user at database and return user name and email at response', async () => {
-    const userRepository = getRepository(User);
-    const data = { id: 2, email: 'davi@example.com', name: 'Hermanoteu', password: '1234acbd', birthday: '28-06-2002' };
-    const hashSupervisor = new hashPassword();
+    const data = { email: 'davi@example.com', name: 'Hermanoteu', password: '1234acbd', birthday: '28-06-2002' };
 
     const response = await createUserMutation(data);
-    const userSaved: User | undefined = await userRepository.findOne({ email: data.email });
+    const userSaved = await repositories.findOne({ email: data.email });
+    
     const isPasswordEqual = await hashSupervisor.compare(data.password, userSaved.password);
-    await userRepository.delete(userSaved);
-
     const expectedResponse = data;
     expect(response.body.data.createUser).to.deep.equal({
       id: userSaved?.id.toString(),
@@ -77,26 +93,20 @@ describe('test to create a user', function () {
       birthday: expectedResponse.birthday,
     });
     expect(isPasswordEqual).to.equal(true);
-    expect(userSaved?.password).to.not.equal(data.password);
   });
 
   it('should return an error if the user already exists', async () => {
-    const userRepository = getRepository(User);
-    const hashSupervisor = new hashPassword();
     const data = {
-      id: 2,
       email: 'email@email.com',
       name: 'Josenildo',
       password: 'ssass12A',
       birthday: '21-04-2002',
     };
-    data.password = await hashSupervisor.hash(data.password);
 
-    await userRepository.save(data);
-    const response2 = await createUserMutation(data);
+    const response = await createUserMutation(data);
 
     const expectedResponse = { message: 'E-mail já existente. Cadastre outro e-mail.', code: 400 };
-    expect(response2.body.errors[0].message).to.be.equal(expectedResponse.message);
-    expect(response2.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code);
+    expect(response.body.errors[0].message).to.be.equal(expectedResponse.message);
+    expect(response.body.errors[0].extensions.exception.code).to.be.equal(expectedResponse.code);
   });
 });
