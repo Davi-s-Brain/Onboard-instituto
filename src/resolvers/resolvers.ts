@@ -17,6 +17,17 @@ export const resolvers = {
   Query: {
     hello: () => 'Hello world',
 
+    user: async (_parent: any, args: { data: { id: number } }, context: { token: string }) => {
+      new Authentication().tokenValidator(context.token);
+      const userRepository = getRepository(User);
+      const user = await userRepository.findOne({ id: args.data.id });
+
+      if (!user) {
+        throw new CustomError('User not found', 400);
+      }
+      return user;
+    },
+
     users: async () => {
       const userRepository = getRepository(User);
       const users = await userRepository.find();

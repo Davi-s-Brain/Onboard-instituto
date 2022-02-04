@@ -29,7 +29,13 @@ const connection = async () => {
 };
 
 const server = async () => {
-  const server = new ApolloServer({ typeDefs, resolvers });
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: ({ req }) => ({
+      token: req.headers.authorization,
+    }),
+  });
   server
     .listen({ port: process.env.PORT })
     .then(({ url }: { url: string }) => console.log(`Server started at ${url} 🤓`));

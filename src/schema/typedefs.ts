@@ -16,6 +16,10 @@ export const typeDefs = gql`
     password: String!
   }
 
+  input UserQuery {
+    id: ID!
+  }
+
   input LoginInput {
     email: String!
     password: String!
@@ -38,6 +42,7 @@ export const typeDefs = gql`
 
   type Query {
     hello: String
+    user(data: UserQuery!): User 
     users: [User]
   }
 `;

@@ -20,7 +20,6 @@ export class Authentication {
     if (!token) {
       throw new CustomError('Token not found', 400);
     }
-
     try {
       jwt.verify(token, process.env.JWT_KEY);
       return true;
