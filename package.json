@@ -37,8 +37,8 @@
   },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "connect": "ts-node-dev src/database.ts",
-    "test": "cross-env TEST=true mocha -r ts-node/register test/index.ts"
+    "test": "cross-env TEST=true mocha -r ts-node/register test/index.ts",
+    "seeds": " ts-node-dev src/seed/index.ts"
   },
   "repository": {
     "type": "git",
