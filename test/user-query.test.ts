@@ -1,8 +1,7 @@
 import * as request from 'supertest';
-import * as jwt from 'jsonwebtoken';
 import { expect } from 'chai';
 import { User } from '../src/entity/user';
-import { getConnection, getRepository } from 'typeorm';
+import { getConnection } from 'typeorm';
 import { hashPassword } from '../src/confirmation/passwordHash';
 import { Authentication } from '../src/confirmation/token';
 
@@ -25,16 +24,32 @@ async function userQuery(variables: any, token: string) {
 
 describe('User-query test', function () {
   let token;
+  let repositories;
+  let user;
+  let hashSupervisor;
+  let createToken;
+
+  before(async () => {
+    repositories = await getConnection().getRepository(User);
+    hashSupervisor = new hashPassword();
+    createToken = new Authentication();
+  });
+
   beforeEach(async () => {
-    const data = { id: 1 };
-    const input = { id: data.id, rememberMe: true };
-    const createToken = new Authentication();
-    const tokenCreated = createToken.generate(input);
-    return (token = tokenCreated);
+    const input = { id: 1, rememberMe: true };
+    token = createToken.generate(input);
+
+    const hashedPassword = await hashSupervisor.hash('batata321');
+    const userTest = Object.assign(new User(), {
+      name: 'Davi',
+      email: 'davi@example.com',
+      password: hashedPassword,
+      birthday: '01-01-2001',
+    });
+    user = await repositories.save(userTest);
   });
 
   afterEach(async () => {
-    const repositories = await getConnection().getRepository(User);
     await repositories.clear();
   });
 
@@ -59,30 +74,14 @@ describe('User-query test', function () {
   });
 
   it('should get the correct data', async () => {
-    const userRepository = getRepository(User);
-    const hashSupervisor = new hashPassword();
-    const userData = {
-      name: 'Davidson',
-      email: 'davidson@example.com',
-      password: 'davimaneirokkk123',
-      birthday: '15-15-2015',
-    };
-    const hashedPassword = await hashSupervisor.hash(userData.password);
-    const newUser = new User();
-    newUser.name = userData.name;
-    newUser.email = userData.email;
-    newUser.birthday = userData.birthday;
-    newUser.password = hashedPassword;
-    await userRepository.save(newUser);
-    const data = { id: newUser.id };
+    const data = { id: user.id };
 
     const response = await userQuery(data, token);
-    await userRepository.delete(newUser);
 
     const expectedResponse = {
-      id: newUser.id.toString(),
-      name: newUser.name,
-      email: newUser.email,
+      id: user.id.toString(),
+      name: user.name,
+      email: user.email,
     };
     expect(response.body.data.user).to.deep.equal(expectedResponse);
   });
