@@ -4,7 +4,6 @@ import { CustomError } from '../error/error';
 import { validator } from '../confirmation/validator';
 import { hashPassword } from '../confirmation/passwordHash';
 import { Authentication } from '../confirmation/token';
-const bcrypt = require('bcryptjs');
 
 interface CreateUser {
   name: string;
@@ -25,7 +24,7 @@ export const resolvers = {
     },
   },
   Mutation: {
-    login: async (_parent: any, args: { data: CreateUser, rememberMe: boolean }) => {
+    login: async (_parent: any, args: { data: CreateUser; rememberMe: boolean }) => {
       const { email, password, rememberMe } = args.data;
 
       if (!validator.password(args.data.password)) {
@@ -64,8 +63,7 @@ export const resolvers = {
       };
       return response;
     },
-    createUser: async (_parent: any, args: { data: CreateUser }, context: {token: string}) => {
-      new Authentication().tokenValidator(context.token);
+    createUser: async (_parent: any, args: { data: CreateUser }) => {
       const userRepository = getRepository(User);
 
       const user = await userRepository.findOne({ where: { email: args.data.email } });
