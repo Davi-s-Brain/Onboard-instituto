@@ -10,7 +10,6 @@ export const typeDefs = gql`
   }
 
   input UserInput {
-    id: ID!
     name: String!
     email: String!
     birthday: String!
