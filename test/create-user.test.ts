@@ -77,7 +77,7 @@ describe('test to create a user', function () {
 
     const response = await createUserMutation(data);
     const userSaved = await repositories.findOne({ email: data.email });
-    
+
     const isPasswordEqual = await hashSupervisor.compare(data.password, userSaved.password);
     const expectedResponse = data;
     expect(response.body.data.createUser).to.deep.equal({

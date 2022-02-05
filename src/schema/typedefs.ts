@@ -19,6 +19,7 @@ export const typeDefs = gql`
   input LoginInput {
     email: String!
     password: String!
+    rememberMe: Boolean
   }
 
   type LoginAuth {

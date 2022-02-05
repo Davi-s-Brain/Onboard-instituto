@@ -3,6 +3,7 @@ import { getRepository } from 'typeorm';
 import { CustomError } from '../error/error';
 import { validator } from '../confirmation/validator';
 import { hashPassword } from '../confirmation/passwordHash';
+import { Authentication } from '../confirmation/token';
 const bcrypt = require('bcryptjs');
 
 interface CreateUser {
@@ -10,6 +11,7 @@ interface CreateUser {
   email: string;
   birthday: string;
   password: string;
+  rememberMe: boolean;
 }
 
 export const resolvers = {
@@ -23,8 +25,8 @@ export const resolvers = {
     },
   },
   Mutation: {
-    login: async (_parent: any, args: { data: CreateUser }) => {
-      const { email, password } = args.data;
+    login: async (_parent: any, args: { data: CreateUser, rememberMe: boolean }) => {
+      const { email, password, rememberMe } = args.data;
 
       if (!validator.password(args.data.password)) {
         throw new CustomError('A senha precisa ter ao menos 6 caracteres, uma letra e um número', 400);
@@ -46,7 +48,8 @@ export const resolvers = {
         throw new CustomError('Email ou senha inválidos', 400);
       }
 
-      const token = 'dado mockado por enquanto';
+      const authentication = new Authentication();
+      const token = authentication.generate({ id: userDatabase.id, rememberMe });
 
       const response = {
         login: {
@@ -61,7 +64,8 @@ export const resolvers = {
       };
       return response;
     },
-    createUser: async (_parent: any, args: { data: CreateUser }) => {
+    createUser: async (_parent: any, args: { data: CreateUser }, context: {token: string}) => {
+      new Authentication().tokenValidator(context.token);
       const userRepository = getRepository(User);
 
       const user = await userRepository.findOne({ where: { email: args.data.email } });
@@ -78,19 +82,15 @@ export const resolvers = {
         throw new CustomError('E-mail já existente. Cadastre outro e-mail.', 400);
       }
 
-      async function createHash(text: string): Promise<string> {
-        const salt = await bcrypt.genSalt(8);
-        return bcrypt.hash(text, salt);
-      }
+      const hashSupervisor = new hashPassword();
 
       const newUser = new User();
       newUser.name = args.data.name;
       newUser.email = args.data.email;
       newUser.birthday = args.data.birthday;
-      newUser.password = await createHash(args.data.password);
-      await userRepository.save(newUser);
+      newUser.password = await hashSupervisor.hash(args.data.password);
 
-      return newUser;
+      return userRepository.save(newUser);
     },
   },
 };

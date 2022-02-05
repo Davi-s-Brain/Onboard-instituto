@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { User } from '../src/entity/user';
 import { getConnection } from 'typeorm';
 import { hashPassword } from '../src/confirmation/passwordHash';
+import { Authentication } from '../src/confirmation/token';
 
 const query = `mutation Login($data: LoginInput!) {
     login(data: $data) {
@@ -49,7 +50,7 @@ describe('Login tests', function () {
   });
 
   it('should return an error if password is in the wrong format', async () => {
-    const data = { email: 'davi@email.com', password: 'abcde' };
+    const data = { email: 'davi@email.com', password: 'abcde', rememberMe: true };
 
     const response = await createLoginMutation(data);
 
@@ -85,7 +86,7 @@ describe('Login tests', function () {
   });
 
   it("should return an error if can't find the email in database", async () => {
-    const data = { email: 'davi@email.com', password: '123abcd1' };
+    const data = { email: 'davi@email.com', password: '123abcd1', rememberMe: true };
 
     const response = await createLoginMutation(data);
 
