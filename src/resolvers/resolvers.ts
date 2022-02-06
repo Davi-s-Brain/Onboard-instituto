@@ -34,11 +34,11 @@ export const resolvers = {
       const page = args.data.limit ?? 15;
       const skip = take * (page - 1);
 
-      if (page < 0 ) {
-        throw new CustomError('page cannot be negative', 400)
+      if (page < 0) {
+        throw new CustomError('page cannot be negative', 400);
       }
-      if (take <= 0 ) {
-        throw new CustomError('the limit must be positive', 400)
+      if (take <= 0) {
+        throw new CustomError('the limit must be positive', 400);
       }
 
       const userRepository = getRepository(User);
@@ -49,10 +49,14 @@ export const resolvers = {
       }
 
       const totalPages = Math.floor(count / take);
+      const hasPastPage = page > 1;
+      const hasNextPage = page < totalPages;
       const result = {
         users,
         page,
         totalPages,
+        hasPastPage,
+        hasNextPage,
       };
       return result;
     },
