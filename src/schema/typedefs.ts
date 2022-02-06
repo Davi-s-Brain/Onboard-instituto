@@ -22,7 +22,7 @@ export const typeDefs = gql`
 
   input UsersQuery {
     limit: Int
-    page: int
+    page: Int
   }
 
   input LoginInput {
@@ -48,6 +48,6 @@ export const typeDefs = gql`
   type Query {
     hello: String
     user(data: UserQuery!): User 
-    users: (data: UsersQuery!): [User]
+    users(data: UsersQuery!): User
   }
 `;
