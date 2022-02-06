@@ -28,19 +28,26 @@ export const resolvers = {
       return user;
     },
 
-    users: async (_parent: any, args: { data: { limit: number; pace: number } }, context: { token: string }) => {
+    users: async (_parent: any, args: { data: { limit: number; page: number } }, context: { token: string }) => {
       new Authentication().tokenValidator(context.token);
-      const skip = args.data.limit ?? 0;
-      const take = args.data.pace ?? 10;
+      const take = args.data.limit ?? 1;
+      const page = args.data.limit ?? 15;
+      const skip = take * (page - 1);
 
       const userRepository = getRepository(User);
-      const users = await userRepository.find({ order: { name: 'ASC' }, skip, take });
+      const [users, count] = await userRepository.findAndCount({ order: { name: 'ASC' }, skip, take });
 
       if (!users) {
         throw new CustomError('Users not found', 400);
       }
 
-      return users;
+      const totalPages = Math.floor(count / take)
+      const result = {
+        users,
+        page,
+        totalPages,
+      }
+      return result;
     },
   },
   Mutation: {
