@@ -93,11 +93,12 @@ export const resolvers = {
 
       const hashSupervisor = new hashPassword();
 
-      const newUser = new User();
-      newUser.name = args.data.name;
-      newUser.email = args.data.email;
-      newUser.birthday = args.data.birthday;
-      newUser.password = await hashSupervisor.hash(args.data.password);
+      const newUser = Object.assign(new User(), {
+        name: args.data.name,
+        email: args.data.email,
+        birthday: args.data.birthday,
+        password: await hashSupervisor.hash(args.data.password),
+      });
 
       return userRepository.save(newUser);
     },
