@@ -28,9 +28,18 @@ export const resolvers = {
       return user;
     },
 
-    users: async () => {
+    users: async (_parent: any, args: { data: { limit: number; pace: number } }, context: { token: string }) => {
+      new Authentication().tokenValidator(context.token);
+      const skip = args.data.limit ?? 0;
+      const take = args.data.pace ?? 10;
+
       const userRepository = getRepository(User);
-      const users = await userRepository.find();
+      const users = await userRepository.find({ order: { name: 'ASC' }, skip, take });
+
+      if (!users) {
+        throw new CustomError('Users not found', 400);
+      }
+
       return users;
     },
   },

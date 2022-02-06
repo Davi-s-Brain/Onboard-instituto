@@ -20,6 +20,11 @@ export const typeDefs = gql`
     id: ID!
   }
 
+  input UsersQuery {
+    limit: Int
+    offset: int
+  }
+
   input LoginInput {
     email: String!
     password: String!
@@ -43,6 +48,6 @@ export const typeDefs = gql`
   type Query {
     hello: String
     user(data: UserQuery!): User 
-    users: [User]
+    users: (data: UsersQuery!): [User]
   }
 `;
