@@ -7,11 +7,12 @@ export async function databaseSeed() {
   const hashSupervisor = new hashPassword();
 
   for (let i = 1; i <= 30; i++) {
-    const newUser = new User();
-    newUser.name = `fake user Carlos${i}`;
-    newUser.email = `carlos${i}@coisa.com`;
-    newUser.password = await hashSupervisor.hash('batata123');
-    newUser.birthday = `${i}0-01-20${i}0`;
+    const newUser = Object.assign(new User(), {
+      name: `fake user`,
+      email: `carlos${i}@coisa.com`,
+      birthday: `${i}0-01-20${i}0`,
+      password: await hashSupervisor.hash('babata123'),
+    })
     await userRepository.save(newUser);
   }
   try {
