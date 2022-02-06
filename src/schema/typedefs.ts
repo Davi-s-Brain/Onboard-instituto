@@ -22,7 +22,7 @@ export const typeDefs = gql`
 
   input UsersQuery {
     limit: Int
-    offset: int
+    page: int
   }
 
   input LoginInput {

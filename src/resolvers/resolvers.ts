@@ -34,6 +34,13 @@ export const resolvers = {
       const page = args.data.limit ?? 15;
       const skip = take * (page - 1);
 
+      if (page < 0 ) {
+        throw new CustomError('page cannot be negative', 400)
+      }
+      if (take <= 0 ) {
+        throw new CustomError('the limit must be positive', 400)
+      }
+
       const userRepository = getRepository(User);
       const [users, count] = await userRepository.findAndCount({ order: { name: 'ASC' }, skip, take });
 
@@ -41,12 +48,12 @@ export const resolvers = {
         throw new CustomError('Users not found', 400);
       }
 
-      const totalPages = Math.floor(count / take)
+      const totalPages = Math.floor(count / take);
       const result = {
         users,
         page,
         totalPages,
-      }
+      };
       return result;
     },
   },
