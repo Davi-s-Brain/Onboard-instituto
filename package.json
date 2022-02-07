@@ -38,7 +38,7 @@
   },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "test": "cross-env TEST=true mocha -r ts-node/register test/index.ts",
+    "test": "cross-env TEST=true mocha -r ts-node/register test/index.ts --timeout 5000",
     "seeds": " ts-node-dev src/seed/index.ts"
   },
   "repository": {

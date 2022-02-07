@@ -28,10 +28,37 @@ export const resolvers = {
       return user;
     },
 
-    users: async () => {
+    users: async (_parent: any, args: { data: { limit: number; page: number } }, context: { token: string }) => {
+      new Authentication().tokenValidator(context.token);
+      const take = args.data.limit ?? 1;
+      const page = args.data.page ?? 15;
+      const skip = take * (page - 1);
+
+      if (page < 0) {
+        throw new CustomError('page cannot be negative', 400);
+      }
+      if (take <= 0) {
+        throw new CustomError('the limit must be positive', 400);
+      }
+
       const userRepository = getRepository(User);
-      const users = await userRepository.find();
-      return users;
+      const [users, count] = await userRepository.findAndCount({ order: { name: 'ASC' }, skip, take });
+
+      if (!users) {
+        throw new CustomError('Users not found', 400);
+      }
+
+      const totalPage = Math.floor(count / take);
+      const hasPastPage = page > 1;
+      const hasNextPage = page < totalPage;
+      const result = {
+        users,
+        page,
+        totalPage,
+        hasPastPage,
+        hasNextPage,
+      };
+      return result;
     },
   },
   Mutation: {

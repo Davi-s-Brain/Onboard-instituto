@@ -46,7 +46,7 @@ describe('Login tests', function () {
   });
 
   afterEach(async () => {
-    await repositories.clear();
+    await repositories.delete({});
   });
 
   it('should return an error if password is in the wrong format', async () => {

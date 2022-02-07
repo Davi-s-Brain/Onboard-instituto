@@ -43,7 +43,7 @@ describe('test to create a user', function () {
   });
 
   afterEach(async () => {
-    await repositories.clear();
+    await repositories.delete({});
   });
 
   it("should return an error if the password isn't valid", async () => {
