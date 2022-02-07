@@ -5,6 +5,7 @@ import { User } from './entity/user';
 import { resolvers } from './resolvers/resolvers';
 import { typeDefs } from './schema/typedefs';
 import * as dotenv from 'dotenv';
+import { Address } from './entity/Address';
 
 const isTest: boolean = process.env.TEST === 'true';
 dotenv.config({ path: process.cwd() + (isTest ? '/.env.test' : '/.env') });
@@ -17,7 +18,7 @@ const connection = async () => {
       const connection = connectionManager.create({
         type: 'postgres',
         url: process.env.DB_URL,
-        entities: [User],
+        entities: [User, Address],
         synchronize: true,
       });
       await connection.connect();
