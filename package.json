@@ -15,6 +15,7 @@
     "typeorm": "^0.2.41"
   },
   "devDependencies": {
+    "@faker-js/faker": "^6.0.0-alpha.5",
     "@types/chai": "^4.3.0",
     "@types/chai-as-promised": "^7.1.4",
     "@types/mocha": "^9.1.0",
@@ -37,8 +38,8 @@
   },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "connect": "ts-node-dev src/database.ts",
-    "test": "cross-env TEST=true mocha -r ts-node/register test/index.ts"
+    "test": "cross-env TEST=true mocha -r ts-node/register test/index.ts",
+    "seeds": " ts-node-dev src/seed/index.ts"
   },
   "repository": {
     "type": "git",
