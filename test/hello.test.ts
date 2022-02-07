@@ -4,11 +4,10 @@ import { getConnection } from 'typeorm';
 import { User } from '../src/entity/user';
 
 describe('Communication with the server', function () {
-  afterEach(async () => {
-    const repositories = await getConnection().getRepository(User);
-    await repositories.clear();
+  let repositories;
+  before(async () => {
+    repositories = await getConnection().getRepository(User);
   });
-
   const query = `
       query {
         hello

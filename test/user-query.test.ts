@@ -50,7 +50,7 @@ describe('User-query test', function () {
   });
 
   afterEach(async () => {
-    await repositories.clear();
+    await repositories.delete({});
   });
 
   it('should return an error if the token is invalid', async () => {

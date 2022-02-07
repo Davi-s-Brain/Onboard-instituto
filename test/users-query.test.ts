@@ -28,7 +28,7 @@ async function usersQuery(variables: any, token: string) {
     .set({ Authorization: token });
 }
 
-describe.only('Users-query test', function () {
+describe('Users-query test', function () {
   let token;
   let createToken;
   let repositories;
@@ -36,9 +36,14 @@ describe.only('Users-query test', function () {
   let totalCount;
 
   before(async () => {
-    await generateSeed()
     repositories = await getConnection().getRepository(User);
     createToken = new Authentication();
+  });
+
+  beforeEach(async () => {
+    await generateSeed();
+    const input = { id: 1, rememberMe: true };
+    token = createToken.generate(input);
     const [users, count] = await repositories.findAndCount({ order: { name: 'ASC' } });
     seedUsers = users.map((user) => {
       return { id: String(user.id), name: user.name, email: user.email };
@@ -46,13 +51,8 @@ describe.only('Users-query test', function () {
     totalCount = count;
   });
 
-  beforeEach(async () => {
-    const input = { id: 1, rememberMe: true };
-    token = createToken.generate(input);
-  });
-
-  after(async () => {
-    await repositories.clear();
+  afterEach(async () => {
+    await repositories.delete({});
   });
 
   it('should return an error if the token is not valid', async () => {
@@ -86,10 +86,11 @@ describe.only('Users-query test', function () {
   });
 
   it('should return the correct data, first page', async () => {
-    const data = { limit: 5, page: 1 };
-    const { limit, page } = data;
+    const limit = 5;
+    const page = 1;
+    const data = { limit, page };
     const skip = limit * (page - 1);
-    const totalPage = Math.floor(totalCount / limit);
+    const totalPage = 6;
 
     const response = await usersQuery(data, token);
 
@@ -104,10 +105,11 @@ describe.only('Users-query test', function () {
   });
 
   it('should return the correct data, middle page', async () => {
-    const data = { limit: 5, page: 5 };
-    const { limit, page } = data;
+    const limit = 5;
+    const page = 5;
+    const data = { limit, page };
     const skip = limit * (page - 1);
-    const totalPage = Math.floor(totalCount / limit);
+    const totalPage = 6;
 
     const response = await usersQuery(data, token);
 
@@ -122,10 +124,11 @@ describe.only('Users-query test', function () {
   });
 
   it('should return the correct data, last page', async () => {
-    const data = { limit: 5, page: 10 };
-    const { limit, page } = data;
+    const limit = 5;
+    const page = 10;
+    const data = { limit, page };
     const skip = limit * (page - 1);
-    const totalPage = Math.floor(totalCount / limit);
+    const totalPage = 6;
 
     const response = await usersQuery(data, token);
 
@@ -140,10 +143,11 @@ describe.only('Users-query test', function () {
   });
 
   it('should return an empy array if the page is higher than the last page', async () => {
-    const data = { limit: 5, page: 11 };
-    const { limit, page } = data;
+    const limit = 5;
+    const page = 11;
+    const data = { limit, page };
     const skip = limit * (page - 1);
-    const totalPage = Math.floor(totalCount / limit);
+    const totalPage = 6;
 
     const response = await usersQuery(data, token);
 
