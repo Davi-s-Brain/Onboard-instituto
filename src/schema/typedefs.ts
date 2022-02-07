@@ -9,6 +9,14 @@ export const typeDefs = gql`
     birthday: String!
   }
 
+  type Users {
+    users: [User]
+    page: Int
+    totalPage: Int
+    hasPastPage: Boolean
+    hasNextPage: Boolean
+  }
+
   input UserInput {
     name: String!
     email: String!
@@ -48,6 +56,6 @@ export const typeDefs = gql`
   type Query {
     hello: String
     user(data: UserQuery!): User 
-    users(data: UsersQuery!): User
+    users(data: UsersQuery!): Users
   }
 `;

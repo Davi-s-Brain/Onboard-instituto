@@ -31,7 +31,7 @@ export const resolvers = {
     users: async (_parent: any, args: { data: { limit: number; page: number } }, context: { token: string }) => {
       new Authentication().tokenValidator(context.token);
       const take = args.data.limit ?? 1;
-      const page = args.data.limit ?? 15;
+      const page = args.data.page ?? 15;
       const skip = take * (page - 1);
 
       if (page < 0) {
@@ -48,13 +48,13 @@ export const resolvers = {
         throw new CustomError('Users not found', 400);
       }
 
-      const totalPages = Math.floor(count / take);
+      const totalPage = Math.floor(count / take);
       const hasPastPage = page > 1;
-      const hasNextPage = page < totalPages;
+      const hasNextPage = page < totalPage;
       const result = {
         users,
         page,
-        totalPages,
+        totalPage,
         hasPastPage,
         hasNextPage,
       };

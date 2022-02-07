@@ -14,7 +14,9 @@ const query = `
         email 
       }
       page
-      totalPages
+      totalPage
+      hasPastPage
+      hasNextPage
     }
   }
 `;
@@ -26,17 +28,22 @@ async function usersQuery(variables: any, token: string) {
     .set({ Authorization: token });
 }
 
-describe('Users-query test', function () {
+describe.only('Users-query test', function () {
   let token;
   let createToken;
   let repositories;
   let seedUsers;
-  let totalCount: number;
+  let totalCount;
 
   before(async () => {
     await generateSeed()
     repositories = await getConnection().getRepository(User);
     createToken = new Authentication();
+    const [users, count] = await repositories.findAndCount({ order: { name: 'ASC' } });
+    seedUsers = users.map((user) => {
+      return { id: String(user.id), name: user.name, email: user.email };
+    });
+    totalCount = count;
   });
 
   beforeEach(async () => {
@@ -44,7 +51,109 @@ describe('Users-query test', function () {
     token = createToken.generate(input);
   });
 
-  afterEach(async () => {
+  after(async () => {
     await repositories.clear();
+  });
+
+  it('should return an error if the token is not valid', async () => {
+    const data = {};
+
+    const response = await usersQuery(data, 'invalid token');
+
+    const expectedResponse = { message: 'Invalid token', code: 400 };
+    expect(response.body.errors[0].message).to.equal(expectedResponse.message);
+    expect(response.body.errors[0].extensions.exception.code).to.equal(expectedResponse.code);
+  });
+
+  it('should return an error if the page is negative', async () => {
+    const data = { page: -1 };
+
+    const response = await usersQuery(data, token);
+
+    const expectedResponse = { message: 'page cannot be negative', code: 400 };
+    expect(response.body.errors[0].message).to.equal(expectedResponse.message);
+    expect(response.body.errors[0].extensions.exception.code).to.equal(expectedResponse.code);
+  });
+
+  it('should return an error if the limit is invalid', async () => {
+    const data = { limit: 0 };
+
+    const response = await usersQuery(data, token);
+
+    const expectedResponse = { message: 'the limit must be positive', code: 400 };
+    expect(response.body.errors[0].message).to.equal(expectedResponse.message);
+    expect(response.body.errors[0].extensions.exception.code).to.equal(expectedResponse.code);
+  });
+
+  it('should return the correct data, first page', async () => {
+    const data = { limit: 5, page: 1 };
+    const { limit, page } = data;
+    const skip = limit * (page - 1);
+    const totalPage = Math.floor(totalCount / limit);
+
+    const response = await usersQuery(data, token);
+
+    const expectedResponse = {
+      users: seedUsers.slice(skip, skip + limit),
+      page,
+      totalPage,
+      hasPastPage: false,
+      hasNextPage: true,
+    };
+    expect(response.body.data.users).to.deep.equal(expectedResponse);
+  });
+
+  it('should return the correct data, middle page', async () => {
+    const data = { limit: 5, page: 5 };
+    const { limit, page } = data;
+    const skip = limit * (page - 1);
+    const totalPage = Math.floor(totalCount / limit);
+
+    const response = await usersQuery(data, token);
+
+    const expectedResponse = {
+      users: seedUsers.slice(skip, skip + limit),
+      page,
+      totalPage,
+      hasPastPage: true,
+      hasNextPage: true,
+    };
+    expect(response.body.data.users).to.deep.equal(expectedResponse);
+  });
+
+  it('should return the correct data, last page', async () => {
+    const data = { limit: 5, page: 10 };
+    const { limit, page } = data;
+    const skip = limit * (page - 1);
+    const totalPage = Math.floor(totalCount / limit);
+
+    const response = await usersQuery(data, token);
+
+    const expectedResponse = {
+      users: seedUsers.slice(skip, skip + limit),
+      page,
+      totalPage,
+      hasPastPage: true,
+      hasNextPage: false,
+    };
+    expect(response.body.data.users).to.deep.equal(expectedResponse);
+  });
+
+  it('should return an empy array if the page is higher than the last page', async () => {
+    const data = { limit: 5, page: 11 };
+    const { limit, page } = data;
+    const skip = limit * (page - 1);
+    const totalPage = Math.floor(totalCount / limit);
+
+    const response = await usersQuery(data, token);
+
+    const expectedResponse = {
+      users: seedUsers.slice(skip, skip + limit + 1),
+      page,
+      totalPage,
+      hasPastPage: true,
+      hasNextPage: false,
+    };
+    expect(response.body.data.users).to.deep.equal(expectedResponse);
   });
 });
